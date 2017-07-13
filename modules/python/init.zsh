@@ -76,6 +76,12 @@ function _python-workon-cwd {
   fi
 }
 
+# Load auto workon cwd hook
+if zstyle -t ':prezto:module:python:virtualenv' auto-switch 'yes'; then
+  # Auto workon when changing directory
+  add-zsh-hook chpwd _python-workon-cwd
+fi
+
 # Load virtualenvwrapper into the shell session, unless requested not to
 if zstyle -T ':prezto:module:python' skip-virtualenvwrapper-init; then
   # Set the directory where virtual environments are stored.
@@ -92,6 +98,10 @@ if zstyle -T ':prezto:module:python' skip-virtualenvwrapper-init; then
     source "$commands[virtualenvwrapper_lazy.sh]"
   elif (( $+commands[virtualenvwrapper.sh] )); then
     source "$commands[virtualenvwrapper.sh]"
+  elif  [[ -f /usr/share/virtualenvwrapper/virtualenvwrapper_lazy.sh ]]; then
+    source /usr/share/virtualenvwrapper/virtualenvwrapper_lazy.sh
+  elif  [[ -f /usr/share/virtualenvwrapper/virtualenvwrapper.sh ]]; then
+    source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
   fi
 fi
 
@@ -105,14 +115,7 @@ if (( $+commands[pip] )); then
   fi
 
   source "$cache_file"
-
   unset cache_file
-
-  # Load auto workon cwd hook
-  if zstyle -t ':prezto:module:python:virtualenv' auto-switch 'yes'; then
-    # Auto workon when changing directory
-    add-zsh-hook chpwd _python-workon-cwd
-  fi
 fi
 
 #
